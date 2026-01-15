@@ -25,17 +25,40 @@
 
     <config>
         <fields name="params">
-            <fieldset name="basic">
+            <fieldset name="basic" label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_BASIC_SETTINGS">
+                <field
+                    name="target_urls"
+                    type="textarea"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TARGET_URLS_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TARGET_URLS_DESC"
+                    rows="5"
+                    cols="50"
+                    filter="raw"
+                    hint="/index.php?option=com_djclassifieds&amp;view=additem"
+                />
+
                 <field
                     name="max_companies"
                     type="number"
                     label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MAX_COMPANIES_LABEL"
                     description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MAX_COMPANIES_DESC"
-                    default="5"
+                    default="10"
                     min="1"
-                    max="20"
+                    max="50"
                     step="1"
                 />
+
+                <field
+                    name="show_all_companies"
+                    type="radio"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_SHOW_ALL_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_SHOW_ALL_DESC"
+                    default="1"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
 
                 <field
                     name="match_by_category"
@@ -58,7 +81,6 @@
                 >
                     <option value="before">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_BEFORE</option>
                     <option value="after">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_AFTER</option>
-                    <option value="sidebar">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_SIDEBAR</option>
                 </field>
 
                 <field
@@ -93,6 +115,56 @@
                     rows="5"
                     cols="50"
                     filter="raw"
+                />
+            </fieldset>
+
+            <fieldset name="ai_settings" label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_AI_SETTINGS">
+                <field
+                    name="enable_chatgpt"
+                    type="radio"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_ENABLE_AI_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_ENABLE_AI_DESC"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="chatgpt_api_key"
+                    type="text"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_API_KEY_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_API_KEY_DESC"
+                    size="50"
+                    filter="raw"
+                    showon="enable_chatgpt:1"
+                />
+
+                <field
+                    name="chatgpt_model"
+                    type="list"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_AI_MODEL_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_AI_MODEL_DESC"
+                    default="gpt-4o-mini"
+                    showon="enable_chatgpt:1"
+                >
+                    <option value="gpt-4o-mini">GPT-4o Mini (Recommended)</option>
+                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                </field>
+
+                <field
+                    name="ai_max_results"
+                    type="number"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_AI_MAX_RESULTS_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_AI_MAX_RESULTS_DESC"
+                    default="5"
+                    min="1"
+                    max="20"
+                    step="1"
+                    showon="enable_chatgpt:1"
                 />
             </fieldset>
         </fields>
