@@ -1,0 +1,285 @@
+/**
+ * Premium Companies Plugin Styles
+ * @package     Joomla.Plugin
+ * @subpackage  Content.PremiumCompanies
+ * @copyright   Copyright (C) 2026. All rights reserved.
+ * @license     GNU General Public License version 2 or later
+ */
+
+/* Container Styles */
+.premium-companies-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.premium-companies-title {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid #0066cc;
+    padding-bottom: 10px;
+}
+
+.premium-companies-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+/* Card Style */
+.premium-companies-cards .premium-company-card {
+    flex: 1 1 calc(33.333% - 20px);
+    min-width: 280px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-companies-cards .premium-company-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* List Style */
+.premium-companies-list .premium-company-card {
+    flex: 1 1 100%;
+    background: #fff;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.premium-companies-list .premium-company-card .company-logo {
+    flex-shrink: 0;
+}
+
+/* Compact Style */
+.premium-companies-compact .premium-companies-list {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.premium-companies-compact .premium-company-card {
+    flex: 1 1 100%;
+    background: #fff;
+    border-radius: 4px;
+    padding: 10px 15px;
+    border-left: 4px solid #0066cc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.premium-companies-compact .company-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.premium-companies-compact .company-name {
+    margin: 0;
+    font-size: 1em;
+}
+
+/* Company Logo */
+.company-logo {
+    width: 100%;
+    max-width: 120px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.premium-companies-list .company-logo,
+.premium-companies-compact .company-logo {
+    margin-bottom: 0;
+    max-width: 80px;
+}
+
+.company-logo img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+/* Company Info */
+.company-info {
+    flex: 1;
+}
+
+.company-name {
+    font-size: 1.2em;
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.company-name a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.company-name a:hover {
+    color: #0052a3;
+    text-decoration: underline;
+}
+
+.company-description {
+    font-size: 0.95em;
+    color: #666;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+/* Company Contact */
+.company-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.company-contact span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.company-contact i {
+    color: #0066cc;
+    font-size: 1.1em;
+}
+
+.company-contact a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.company-contact a:hover {
+    text-decoration: underline;
+}
+
+/* Premium Badge */
+.premium-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #333;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.premium-companies-list .premium-badge,
+.premium-companies-compact .premium-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-left: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .premium-companies-cards .premium-company-card {
+        flex: 1 1 calc(50% - 20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .premium-companies-container {
+        padding: 15px;
+    }
+
+    .premium-companies-cards .premium-company-card {
+        flex: 1 1 100%;
+    }
+
+    .premium-companies-list .premium-company-card {
+        flex-direction: column;
+    }
+
+    .premium-companies-list .company-logo {
+        max-width: 100px;
+        margin: 0 auto 10px;
+    }
+
+    .premium-companies-compact .company-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .premium-badge {
+        font-size: 0.7em;
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .premium-companies-title {
+        font-size: 1.2em;
+    }
+
+    .company-name {
+        font-size: 1em;
+    }
+
+    .company-contact {
+        font-size: 0.85em;
+    }
+}
+
+/* Animation for loading */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.premium-company-card {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Print styles */
+@media print {
+    .premium-companies-container {
+        background: none;
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+
+    .premium-company-card {
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+
+    .premium-badge {
+        background: #ddd !important;
+        box-shadow: none;
+    }
+}

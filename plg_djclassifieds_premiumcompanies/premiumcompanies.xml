@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="content" method="upgrade">
+    <name>PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES</name>
+    <author>Claude AI</author>
+    <creationDate>2026-01</creationDate>
+    <copyright>Copyright (C) 2026. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>noreply@anthropic.com</authorEmail>
+    <authorUrl>https://www.anthropic.com</authorUrl>
+    <version>1.0.0</version>
+    <description>PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_XML_DESCRIPTION</description>
+
+    <files>
+        <filename plugin="premiumcompanies">premiumcompanies.php</filename>
+        <folder>language</folder>
+        <folder>assets</folder>
+    </files>
+
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_djclassifieds_premiumcompanies.ini</language>
+        <language tag="ru-RU">language/ru-RU/plg_djclassifieds_premiumcompanies.ini</language>
+    </languages>
+
+    <scriptfile>script.php</scriptfile>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="max_companies"
+                    type="number"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MAX_COMPANIES_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MAX_COMPANIES_DESC"
+                    default="5"
+                    min="1"
+                    max="20"
+                    step="1"
+                />
+
+                <field
+                    name="match_by_category"
+                    type="radio"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MATCH_CATEGORY_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MATCH_CATEGORY_DESC"
+                    default="1"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="show_position"
+                    type="list"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_DESC"
+                    default="before"
+                >
+                    <option value="before">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_BEFORE</option>
+                    <option value="after">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_AFTER</option>
+                    <option value="sidebar">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_POSITION_SIDEBAR</option>
+                </field>
+
+                <field
+                    name="display_style"
+                    type="list"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_STYLE_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_STYLE_DESC"
+                    default="cards"
+                >
+                    <option value="cards">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_STYLE_CARDS</option>
+                    <option value="list">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_STYLE_LIST</option>
+                    <option value="compact">PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_STYLE_COMPACT</option>
+                </field>
+
+                <field
+                    name="show_logo"
+                    type="radio"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_SHOW_LOGO_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_SHOW_LOGO_DESC"
+                    default="1"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="custom_css"
+                    type="textarea"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_CUSTOM_CSS_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_CUSTOM_CSS_DESC"
+                    rows="5"
+                    cols="50"
+                    filter="raw"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
