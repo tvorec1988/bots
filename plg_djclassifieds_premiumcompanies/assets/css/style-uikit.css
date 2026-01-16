@@ -1,0 +1,317 @@
+/**
+ * Premium Companies Plugin - UIkit/YooTheme Styles
+ * @package     Joomla.Plugin
+ * @subpackage  Content.PremiumCompanies
+ * @copyright   Copyright (C) 2026. All rights reserved.
+ * @license     GNU General Public License version 2 or later
+ */
+
+/* Container */
+.premium-companies-container {
+    background: var(--tm-background-muted, #f8f8f8) !important;
+}
+
+.premium-companies-container .uk-container {
+    max-width: 1200px;
+}
+
+/* Heading */
+.premium-companies-container .uk-heading-line {
+    margin-bottom: 30px;
+}
+
+.premium-companies-container .uk-heading-line > span {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--tm-heading-primary-color, #333);
+}
+
+/* Cards */
+.premium-companies-container .uk-card {
+    position: relative;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.premium-companies-container .uk-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.premium-companies-container .uk-card-body {
+    padding: 20px;
+}
+
+.premium-companies-container .uk-card-small .uk-card-body {
+    padding: 15px;
+}
+
+/* Card Media */
+.premium-companies-container .uk-card-media-top img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Card Title */
+.premium-companies-container .uk-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.premium-companies-container .uk-card-title a {
+    color: var(--tm-heading-primary-color, #333);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.premium-companies-container .uk-card-title a:hover {
+    color: var(--tm-link-hover-color, #0066cc);
+}
+
+/* Premium/Promoted Badge */
+.premium-companies-container .uk-card-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+.premium-companies-container .uk-label-warning {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #333;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    box-shadow: 0 2px 6px rgba(255, 215, 0, 0.3);
+}
+
+/* Type Meta */
+.premium-companies-container .uk-text-meta {
+    color: var(--tm-text-muted-color, #999);
+    font-size: 0.875rem;
+}
+
+.premium-companies-container .uk-text-meta [uk-icon] {
+    margin-right: 4px;
+}
+
+/* Description */
+.premium-companies-container .uk-text-small {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--tm-text-secondary-color, #666);
+}
+
+/* Contact Info */
+.premium-companies-container .uk-text-small [uk-icon] {
+    margin-right: 6px;
+    color: var(--tm-link-color, #0066cc);
+}
+
+/* View Details Button */
+.premium-companies-container .uk-button-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--tm-link-color, #0066cc);
+    text-transform: none;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.premium-companies-container .uk-button-text:hover {
+    color: var(--tm-link-hover-color, #0052a3);
+    text-decoration: none;
+}
+
+.premium-companies-container .uk-button-text [uk-icon] {
+    transition: transform 0.2s;
+}
+
+.premium-companies-container .uk-button-text:hover [uk-icon] {
+    transform: translateX(4px);
+}
+
+/* Grid Adjustments */
+@media (max-width: 959px) {
+    .premium-companies-container .uk-card-media-top img {
+        height: 150px;
+    }
+}
+
+@media (max-width: 639px) {
+    .premium-companies-container {
+        padding: 20px 0;
+    }
+
+    .premium-companies-container .uk-card-body {
+        padding: 15px;
+    }
+
+    .premium-companies-container .uk-card-media-top img {
+        height: 120px;
+    }
+
+    .premium-companies-container .uk-heading-line > span {
+        font-size: 1.25rem;
+    }
+}
+
+/* Animation */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.premium-companies-container .uk-card {
+    animation: slideInUp 0.4s ease-out;
+}
+
+.premium-companies-container [uk-grid] > * {
+    animation: slideInUp 0.4s ease-out;
+}
+
+.premium-companies-container [uk-grid] > *:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.premium-companies-container [uk-grid] > *:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.premium-companies-container [uk-grid] > *:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.premium-companies-container [uk-grid] > *:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.premium-companies-container [uk-grid] > *:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.premium-companies-container [uk-grid] > *:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+/* Dark Mode Support (YooTheme) */
+@media (prefers-color-scheme: dark) {
+    .premium-companies-container {
+        background: var(--tm-background-muted, #1e1e1e) !important;
+    }
+
+    .premium-companies-container .uk-card {
+        background: var(--tm-card-background, #2a2a2a);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .premium-companies-container .uk-card-hover:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .premium-companies-container .uk-card-title a {
+        color: var(--tm-heading-primary-color, #fff);
+    }
+
+    .premium-companies-container .uk-text-small {
+        color: var(--tm-text-secondary-color, #aaa);
+    }
+}
+
+/* Compact Style (List View) */
+.premium-companies-compact .uk-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.premium-companies-compact .uk-card-media-top {
+    flex-shrink: 0;
+    width: 80px;
+    margin: 0;
+}
+
+.premium-companies-compact .uk-card-media-top img {
+    height: 80px;
+    border-radius: 8px;
+}
+
+.premium-companies-compact .uk-card-body {
+    flex: 1;
+    padding: 10px;
+}
+
+.premium-companies-compact .uk-card-title {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.premium-companies-compact .uk-card-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-left: auto;
+}
+
+/* Loading State */
+.premium-companies-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--tm-text-muted-color, #999);
+}
+
+.premium-companies-loading [uk-spinner] {
+    margin-bottom: 10px;
+}
+
+/* Empty State */
+.premium-companies-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--tm-text-muted-color, #999);
+}
+
+.premium-companies-empty [uk-icon] {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+/* Print Styles */
+@media print {
+    .premium-companies-container {
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    .premium-companies-container .uk-card {
+        break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #ddd;
+    }
+
+    .premium-companies-container .uk-card-badge {
+        background: #f0f0f0 !important;
+        color: #333 !important;
+    }
+
+    .premium-companies-container .uk-button-text {
+        display: none;
+    }
+}

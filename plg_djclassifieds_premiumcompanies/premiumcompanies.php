@@ -15,14 +15,15 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Http\HttpFactory;
+use Joomla\CMS\Router\Route;
 
 /**
  * Premium Companies Plugin for DJ-Classifieds and J-Business Directory Integration
  *
- * Displays relevant companies from J-Business Directory when adding orders in DJ-Classifieds.
- * Premium companies are shown first, with optional AI-powered relevance matching.
+ * Displays relevant companies from J-Business Directory AND ads from DJ-Classifieds
+ * when adding orders. Premium companies/ads are shown first, with optional AI-powered matching.
  *
- * @since  1.0.0
+ * @since  2.0.0
  */
 class PlgContentPremiumCompanies extends CMSPlugin
 {
@@ -51,7 +52,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
     protected $db;
 
     /**
-     * Plugin that displays companies before content
+     * Plugin that displays companies/ads before content
      *
      * @param   string   $context  The context of the content
      * @param   object   &$row     The content object
@@ -64,22 +65,20 @@ class PlgContentPremiumCompanies extends CMSPlugin
      */
     public function onContentBeforeDisplay($context, &$row, &$params, $page = 0)
     {
-        // Check if we're on the target page
         if (!$this->isTargetPage()) {
             return '';
         }
 
-        // Check position setting
         $position = $this->params->get('show_position', 'before');
         if ($position !== 'before') {
             return '';
         }
 
-        return $this->displayCompanies($row);
+        return $this->displayResults($row);
     }
 
     /**
-     * Plugin that displays companies after content
+     * Plugin that displays companies/ads after content
      *
      * @param   string   $context  The context of the content
      * @param   object   &$row     The content object
@@ -92,51 +91,55 @@ class PlgContentPremiumCompanies extends CMSPlugin
      */
     public function onContentAfterDisplay($context, &$row, &$params, $page = 0)
     {
-        // Check if we're on the target page
         if (!$this->isTargetPage()) {
             return '';
         }
 
-        // Check position setting
         $position = $this->params->get('show_position', 'before');
         if ($position !== 'after') {
             return '';
         }
 
-        return $this->displayCompanies($row);
+        return $this->displayResults($row);
     }
 
     /**
-     * Display companies with premium first
+     * Display companies and ads (premium first)
      *
      * @param   object  $item  The DJ-Classifieds item
      *
      * @return  string
      *
-     * @since   1.0.0
+     * @since   2.0.0
      */
-    protected function displayCompanies($item)
+    protected function displayResults($item)
     {
-        // Load CSS and JS
         $this->loadAssets();
 
-        // Get item data for AI analysis
         $itemData = $this->extractItemData($item);
 
-        // Get companies (premium first, then others)
+        // Get companies from J-Business Directory
         $companies = $this->getCompanies($itemData);
 
-        if (empty($companies)) {
+        // Get ads from DJ-Classifieds
+        $ads = [];
+        if ($this->params->get('search_djclassifieds', 1)) {
+            $ads = $this->getDJClassifiedsAds($itemData);
+        }
+
+        // Combine results
+        $allResults = $this->combineResults($companies, $ads);
+
+        if (empty($allResults)) {
             return '';
         }
 
-        // Use AI to rank/filter if enabled
+        // Use AI to rank if enabled
         if ($this->params->get('enable_chatgpt', 0) && !empty($itemData['text'])) {
-            $companies = $this->rankCompaniesWithAI($companies, $itemData);
+            $allResults = $this->rankWithAI($allResults, $itemData);
         }
 
-        // Generate HTML output
-        return $this->renderCompanies($companies);
+        return $this->renderResults($allResults);
     }
 
     /**
@@ -150,33 +153,25 @@ class PlgContentPremiumCompanies extends CMSPlugin
     {
         $targetUrls = $this->params->get('target_urls', '');
 
-        // If no target URLs specified, don't show anywhere
         if (empty($targetUrls)) {
             return false;
         }
 
-        // Get current URL components
         $input = $this->app->input;
         $option = $input->get('option', '');
         $view = $input->get('view', '');
-        $task = $input->get('task', '');
 
-        // Build current URL pattern
         $currentUrl = Uri::getInstance()->toString();
-        $currentPath = parse_url($currentUrl, PHP_URL_PATH);
         $currentQuery = $_SERVER['QUERY_STRING'] ?? '';
 
-        // Split target URLs by line
         $targetUrlsArray = array_filter(array_map('trim', explode("\n", $targetUrls)));
 
         foreach ($targetUrlsArray as $targetUrl) {
-            // Check if target URL matches current URL
             if (strpos($currentUrl, $targetUrl) !== false ||
                 strpos($currentQuery, str_replace(['index.php?', '&amp;'], ['', '&'], $targetUrl)) !== false) {
                 return true;
             }
 
-            // Check option and view match
             if (strpos($targetUrl, 'option=' . $option) !== false &&
                 (empty($view) || strpos($targetUrl, 'view=' . $view) !== false)) {
                 return true;
@@ -204,14 +199,12 @@ class PlgContentPremiumCompanies extends CMSPlugin
             'description' => ''
         ];
 
-        // Try to get data from input (form submission)
         $input = $this->app->input;
 
         $data['title'] = $input->getString('name', '') ?: ($item->name ?? '');
         $data['description'] = $input->getString('description', '') ?: ($item->description ?? '');
         $data['category_id'] = $input->getInt('cat_id', 0) ?: ($item->cat_id ?? 0);
 
-        // Combine text for AI analysis
         $data['text'] = trim($data['title'] . ' ' . strip_tags($data['description']));
 
         return $data;
@@ -235,7 +228,6 @@ class PlgContentPremiumCompanies extends CMSPlugin
             $showAllCompanies = $this->params->get('show_all_companies', 1);
             $matchByCategory = $this->params->get('match_by_category', 1);
 
-            // Build base query
             $query->select('c.*,
                 CASE
                     WHEN p.type = ' . $db->quote('premium') . ' AND (cp.expire_date IS NULL OR cp.expire_date >= ' . $db->quote(Factory::getDate()->toSql()) . ')
@@ -246,37 +238,36 @@ class PlgContentPremiumCompanies extends CMSPlugin
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.approved') . ' = 1');
 
-            // Left join with packages to identify premium companies
             $query->join('LEFT', $db->quoteName('#__jbusinessdirectory_company_package', 'cp') .
                 ' ON ' . $db->quoteName('cp.companyId') . ' = ' . $db->quoteName('c.id'))
                 ->join('LEFT', $db->quoteName('#__jbusinessdirectory_packages', 'p') .
                 ' ON ' . $db->quoteName('p.id') . ' = ' . $db->quoteName('cp.packageId'));
 
-            // If show only premium
             if (!$showAllCompanies) {
                 $query->where($db->quoteName('p.type') . ' = ' . $db->quote('premium'))
                     ->where('(' . $db->quoteName('cp.expire_date') . ' IS NULL OR ' .
                         $db->quoteName('cp.expire_date') . ' >= ' . $db->quote(Factory::getDate()->toSql()) . ')');
             }
 
-            // Match by category if enabled and category is provided
             if ($matchByCategory && !empty($itemData['category_id'])) {
                 $query->where($db->quoteName('c.main_category') . ' = ' . (int) $itemData['category_id']);
             }
 
-            // Order by: premium first, then featured, then by date
             $query->order('is_premium DESC, ' . $db->quoteName('c.featured') . ' DESC, ' .
                 $db->quoteName('c.created') . ' DESC');
 
-            // Limit results
             $query->setLimit($maxCompanies);
 
             $db->setQuery($query);
             $companies = $db->loadObjectList();
 
+            // Mark as company type
+            foreach ($companies as $company) {
+                $company->item_type = 'company';
+            }
+
             return $companies ?: [];
         } catch (Exception $e) {
-            // Log error but don't break the page
             Factory::getApplication()->enqueueMessage(
                 Text::sprintf('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_ERROR', $e->getMessage()),
                 'error'
@@ -286,89 +277,186 @@ class PlgContentPremiumCompanies extends CMSPlugin
     }
 
     /**
-     * Rank companies using ChatGPT API
+     * Get ads from DJ-Classifieds (from specific categories like "Production Ads")
      *
-     * @param   array  $companies  Array of company objects
-     * @param   array  $itemData   Item data for context
+     * @param   array  $itemData  Item data for filtering
      *
      * @return  array
      *
-     * @since   1.0.0
+     * @since   2.0.0
      */
-    protected function rankCompaniesWithAI($companies, $itemData)
+    protected function getDJClassifiedsAds($itemData)
+    {
+        try {
+            $db = $this->db;
+            $query = $db->getQuery(true);
+
+            $maxAds = (int) $this->params->get('max_djclassifieds_ads', 5);
+            $categoryIds = $this->params->get('djclassifieds_category_ids', '');
+
+            if (empty($categoryIds)) {
+                return [];
+            }
+
+            // Parse category IDs
+            $catIds = array_filter(array_map('trim', explode(',', $categoryIds)));
+            $catIds = array_map('intval', $catIds);
+
+            if (empty($catIds)) {
+                return [];
+            }
+
+            // Query DJ-Classifieds items
+            $query->select('i.*, c.name as category_name,
+                CASE
+                    WHEN p.published = 1 AND (p.exp_days = 0 OR p.exp_days > DATEDIFF(NOW(), i.date_start))
+                    THEN 1
+                    ELSE 0
+                END as is_promoted')
+                ->from($db->quoteName('#__djcf_items', 'i'))
+                ->join('LEFT', $db->quoteName('#__djcf_categories', 'c') .
+                    ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('i.cat_id'))
+                ->join('LEFT', $db->quoteName('#__djcf_promotions', 'p') .
+                    ' ON ' . $db->quoteName('p.item_id') . ' = ' . $db->quoteName('i.id'))
+                ->where($db->quoteName('i.published') . ' = 1')
+                ->where($db->quoteName('i.cat_id') . ' IN (' . implode(',', $catIds) . ')');
+
+            // Order by promoted first
+            $query->order('is_promoted DESC, ' . $db->quoteName('i.date_start') . ' DESC');
+
+            $query->setLimit($maxAds);
+
+            $db->setQuery($query);
+            $ads = $db->loadObjectList();
+
+            // Mark as ad type and add is_premium flag
+            foreach ($ads as $ad) {
+                $ad->item_type = 'ad';
+                $ad->is_premium = $ad->is_promoted; // Promoted ads treated as premium
+            }
+
+            return $ads ?: [];
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_ERROR_ADS', $e->getMessage()),
+                'warning'
+            );
+            return [];
+        }
+    }
+
+    /**
+     * Combine companies and ads (premium first)
+     *
+     * @param   array  $companies  Companies from J-Business Directory
+     * @param   array  $ads        Ads from DJ-Classifieds
+     *
+     * @return  array
+     *
+     * @since   2.0.0
+     */
+    protected function combineResults($companies, $ads)
+    {
+        $combined = array_merge($companies, $ads);
+
+        // Sort: premium/promoted first, then regular
+        usort($combined, function($a, $b) {
+            $aPremium = $a->is_premium ?? 0;
+            $bPremium = $b->is_premium ?? 0;
+
+            if ($aPremium != $bPremium) {
+                return $bPremium - $aPremium; // Premium first
+            }
+
+            // Same premium status, sort by date
+            $aDate = $a->created ?? $a->date_start ?? '';
+            $bDate = $b->created ?? $b->date_start ?? '';
+
+            return strcmp($bDate, $aDate); // Newer first
+        });
+
+        return $combined;
+    }
+
+    /**
+     * Rank results using ChatGPT API
+     *
+     * @param   array  $results   Array of company/ad objects
+     * @param   array  $itemData  Item data for context
+     *
+     * @return  array
+     *
+     * @since   2.0.0
+     */
+    protected function rankWithAI($results, $itemData)
     {
         $apiKey = $this->params->get('chatgpt_api_key', '');
 
-        if (empty($apiKey) || empty($companies)) {
-            return $companies;
+        if (empty($apiKey) || empty($results)) {
+            return $results;
         }
 
         try {
             $model = $this->params->get('chatgpt_model', 'gpt-4o-mini');
             $maxResults = (int) $this->params->get('ai_max_results', 5);
 
-            // Prepare company data for AI
-            $companyList = [];
-            foreach ($companies as $idx => $company) {
-                $companyList[] = [
+            $resultList = [];
+            foreach ($results as $idx => $result) {
+                $resultList[] = [
                     'id' => $idx,
-                    'name' => $company->name,
-                    'description' => strip_tags($company->description ?? ''),
-                    'is_premium' => $company->is_premium ?? 0
+                    'type' => $result->item_type,
+                    'name' => $result->name ?? '',
+                    'description' => strip_tags($result->description ?? $result->intro_desc ?? ''),
+                    'is_premium' => $result->is_premium ?? 0
                 ];
             }
 
-            // Create prompt for ChatGPT
-            $prompt = $this->buildAIPrompt($itemData, $companyList, $maxResults);
-
-            // Call OpenAI API
+            $prompt = $this->buildAIPrompt($itemData, $resultList, $maxResults);
             $response = $this->callOpenAI($apiKey, $model, $prompt);
 
-            if ($response && isset($response['company_ids'])) {
-                // Reorder companies based on AI recommendations
-                return $this->reorderCompaniesByAI($companies, $response['company_ids']);
+            if ($response && isset($response['item_ids'])) {
+                return $this->reorderByAI($results, $response['item_ids']);
             }
 
         } catch (Exception $e) {
-            // Log error but continue with original order
             Factory::getApplication()->enqueueMessage(
                 Text::sprintf('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_AI_ERROR', $e->getMessage()),
                 'warning'
             );
         }
 
-        return $companies;
+        return $results;
     }
 
     /**
-     * Build AI prompt for company ranking
+     * Build AI prompt for ranking
      *
-     * @param   array  $itemData      Item data
-     * @param   array  $companyList   Company list
-     * @param   int    $maxResults    Max results to return
+     * @param   array  $itemData    Item data
+     * @param   array  $resultList  Result list
+     * @param   int    $maxResults  Max results to return
      *
      * @return  string
      *
-     * @since   1.0.0
+     * @since   2.0.0
      */
-    protected function buildAIPrompt($itemData, $companyList, $maxResults)
+    protected function buildAIPrompt($itemData, $resultList, $maxResults)
     {
-        $prompt = "You are helping to match relevant companies with a classified ad.\n\n";
-        $prompt .= "Classified Ad Information:\n";
+        $prompt = "You are helping to match relevant companies and production ads with a service request.\n\n";
+        $prompt .= "Service Request Information:\n";
         $prompt .= "Title: " . $itemData['title'] . "\n";
         $prompt .= "Description: " . $itemData['description'] . "\n\n";
 
-        $prompt .= "Available Companies:\n";
-        $prompt .= json_encode($companyList, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n\n";
+        $prompt .= "Available Companies and Ads:\n";
+        $prompt .= json_encode($resultList, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n\n";
 
         $prompt .= "Instructions:\n";
-        $prompt .= "1. Analyze the classified ad and identify what services/products the user might need\n";
-        $prompt .= "2. Match companies that would be most relevant to help with this ad\n";
-        $prompt .= "3. Prioritize premium companies (is_premium=1) when relevance is similar\n";
-        $prompt .= "4. Return the top {$maxResults} most relevant company IDs\n\n";
+        $prompt .= "1. Analyze the service request and identify what products/services the user needs\n";
+        $prompt .= "2. Match companies/ads that would be most relevant\n";
+        $prompt .= "3. Prioritize premium/promoted items (is_premium=1) when relevance is similar\n";
+        $prompt .= "4. Return the top {$maxResults} most relevant item IDs\n\n";
 
         $prompt .= "Return ONLY a JSON object with this format:\n";
-        $prompt .= '{"company_ids": [0, 3, 1], "reasoning": "brief explanation"}';
+        $prompt .= '{"item_ids": [0, 3, 1], "reasoning": "brief explanation"}';
 
         return $prompt;
     }
@@ -393,7 +481,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => 'You are a helpful assistant that matches businesses with relevant classified ads. Always respond with valid JSON.'
+                    'content' => 'You are a helpful assistant that matches businesses and production ads with service requests. Always respond with valid JSON.'
                 ],
                 [
                     'role' => 'user',
@@ -410,7 +498,6 @@ class PlgContentPremiumCompanies extends CMSPlugin
             'Authorization: Bearer ' . $apiKey
         ];
 
-        // Use Joomla HTTP client
         try {
             $http = HttpFactory::getHttp();
             $response = $http->post($url, json_encode($data), $headers, 30);
@@ -431,29 +518,28 @@ class PlgContentPremiumCompanies extends CMSPlugin
     }
 
     /**
-     * Reorder companies based on AI recommendations
+     * Reorder results based on AI recommendations
      *
-     * @param   array  $companies    Original companies array
-     * @param   array  $companyIds   AI recommended order
+     * @param   array  $results  Original results array
+     * @param   array  $itemIds  AI recommended order
      *
      * @return  array
      *
-     * @since   1.0.0
+     * @since   2.0.0
      */
-    protected function reorderCompaniesByAI($companies, $companyIds)
+    protected function reorderByAI($results, $itemIds)
     {
         $reordered = [];
 
-        foreach ($companyIds as $id) {
-            if (isset($companies[$id])) {
-                $reordered[] = $companies[$id];
+        foreach ($itemIds as $id) {
+            if (isset($results[$id])) {
+                $reordered[] = $results[$id];
             }
         }
 
-        // Add remaining companies that weren't selected by AI
-        foreach ($companies as $idx => $company) {
-            if (!in_array($idx, $companyIds)) {
-                $reordered[] = $company;
+        foreach ($results as $idx => $result) {
+            if (!in_array($idx, $itemIds)) {
+                $reordered[] = $result;
             }
         }
 
@@ -461,126 +547,215 @@ class PlgContentPremiumCompanies extends CMSPlugin
     }
 
     /**
-     * Render companies HTML
+     * Render results HTML (companies + ads) with UIkit styling
      *
-     * @param   array  $companies  Array of company objects
+     * @param   array  $results  Array of company/ad objects
      *
      * @return  string
      *
-     * @since   1.0.0
+     * @since   2.0.0
      */
-    protected function renderCompanies($companies)
+    protected function renderResults($results)
     {
         $displayStyle = $this->params->get('display_style', 'cards');
         $showLogo = $this->params->get('show_logo', 1);
 
-        $html = '<div class="premium-companies-container premium-companies-' . $displayStyle . '">';
-        $html .= '<h3 class="premium-companies-title">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TITLE') . '</h3>';
-        $html .= '<div class="premium-companies-list">';
+        $html = '<div class="uk-section uk-section-muted uk-section-small premium-companies-container">';
+        $html .= '<div class="uk-container">';
+        $html .= '<h3 class="uk-heading-line uk-text-center"><span>' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TITLE') . '</span></h3>';
 
-        foreach ($companies as $company) {
-            $html .= $this->renderCompanyCard($company, $displayStyle, $showLogo);
+        if ($displayStyle === 'cards') {
+            $html .= '<div class="uk-grid-match uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid>';
+        } else {
+            $html .= '<div class="uk-grid-small" uk-grid>';
         }
 
-        $html .= '</div>';
-        $html .= '</div>';
+        foreach ($results as $result) {
+            $html .= $this->renderResultCard($result, $displayStyle, $showLogo);
+        }
+
+        $html .= '</div>'; // grid
+        $html .= '</div>'; // container
+        $html .= '</div>'; // section
 
         return $html;
     }
 
     /**
-     * Render individual company card
+     * Render individual result card (company or ad) with UIkit
      *
-     * @param   object   $company       Company object
-     * @param   string   $displayStyle  Display style (cards/list/compact)
-     * @param   boolean  $showLogo      Show company logo
+     * @param   object   $result        Company or ad object
+     * @param   string   $displayStyle  Display style
+     * @param   boolean  $showLogo      Show logo
      *
      * @return  string
      *
-     * @since   1.0.0
+     * @since   2.0.0
      */
-    protected function renderCompanyCard($company, $displayStyle, $showLogo)
+    protected function renderResultCard($result, $displayStyle, $showLogo)
     {
-        $html = '<div class="premium-company-card">';
+        $isCompany = ($result->item_type === 'company');
+        $isPremium = !empty($result->is_premium);
 
-        // Logo
-        if ($showLogo && !empty($company->logo_location)) {
-            $logoUrl = Uri::root() . $company->logo_location;
-            $html .= '<div class="company-logo">';
-            $html .= '<img src="' . htmlspecialchars($logoUrl) . '" alt="' . htmlspecialchars($company->name) . '" />';
+        $html = '<div>';
+        $html .= '<div class="uk-card uk-card-default uk-card-hover uk-card-body uk-card-small">';
+
+        // Premium badge
+        if ($isPremium) {
+            $html .= '<div class="uk-card-badge uk-label uk-label-warning">';
+            $html .= $isCompany ? Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_PREMIUM_BADGE') : Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_PROMOTED_BADGE');
             $html .= '</div>';
         }
 
-        // Company info
-        $html .= '<div class="company-info">';
-        $html .= '<h4 class="company-name">';
+        // Logo/Image
+        if ($showLogo) {
+            $imageUrl = $this->getResultImage($result);
+            if ($imageUrl) {
+                $html .= '<div class="uk-card-media-top">';
+                $html .= '<img src="' . htmlspecialchars($imageUrl) . '" alt="' . htmlspecialchars($result->name) . '" class="uk-border-rounded">';
+                $html .= '</div>';
+            }
+        }
 
-        // Create link to company
-        $companyUrl = $this->getCompanyUrl($company);
-        $html .= '<a href="' . $companyUrl . '" target="_blank">' . htmlspecialchars($company->name) . '</a>';
+        // Title
+        $html .= '<h4 class="uk-card-title uk-margin-small-bottom">';
+        $resultUrl = $this->getResultUrl($result);
+        $html .= '<a href="' . $resultUrl . '" class="uk-link-reset">' . htmlspecialchars($result->name) . '</a>';
         $html .= '</h4>';
 
+        // Type label
+        $html .= '<p class="uk-text-meta uk-margin-remove-top">';
+        $html .= '<span uk-icon="icon: ' . ($isCompany ? 'home' : 'tag') . '; ratio: 0.8"></span> ';
+        $html .= $isCompany ? Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TYPE_COMPANY') : Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TYPE_AD');
+        $html .= '</p>';
+
         // Description
-        if (!empty($company->description)) {
-            $description = strip_tags($company->description);
-            $description = mb_substr($description, 0, 150);
-            if (mb_strlen($company->description) > 150) {
-                $description .= '...';
-            }
-            $html .= '<p class="company-description">' . htmlspecialchars($description) . '</p>';
+        $description = $this->getResultDescription($result);
+        if ($description) {
+            $html .= '<p class="uk-text-small">' . htmlspecialchars($description) . '</p>';
         }
 
-        // Contact info
-        if ($displayStyle !== 'compact') {
-            $html .= '<div class="company-contact">';
+        // Contact info for companies
+        if ($isCompany && $displayStyle !== 'compact') {
+            $html .= '<div class="uk-margin-small-top">';
 
-            if (!empty($company->phone)) {
-                $html .= '<span class="company-phone"><i class="icon-phone"></i> ' . htmlspecialchars($company->phone) . '</span>';
+            if (!empty($result->phone)) {
+                $html .= '<div class="uk-text-small"><span uk-icon="icon: receiver; ratio: 0.8"></span> ' . htmlspecialchars($result->phone) . '</div>';
             }
 
-            if (!empty($company->email)) {
-                $html .= '<span class="company-email"><i class="icon-envelope"></i> ' . htmlspecialchars($company->email) . '</span>';
-            }
-
-            if (!empty($company->website)) {
-                $html .= '<span class="company-website"><i class="icon-link"></i> <a href="' . htmlspecialchars($company->website) . '" target="_blank">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_WEBSITE') . '</a></span>';
+            if (!empty($result->website)) {
+                $html .= '<div class="uk-text-small"><span uk-icon="icon: world; ratio: 0.8"></span> <a href="' . htmlspecialchars($result->website) . '" target="_blank" class="uk-link-muted">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_WEBSITE') . '</a></div>';
             }
 
             $html .= '</div>';
         }
 
-        // Premium badge (only for premium companies)
-        if (!empty($company->is_premium)) {
-            $html .= '<span class="premium-badge">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_PREMIUM_BADGE') . '</span>';
-        }
+        // View button
+        $html .= '<div class="uk-margin-small-top">';
+        $html .= '<a href="' . $resultUrl . '" class="uk-button uk-button-text">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_VIEW_DETAILS') . ' <span uk-icon="icon: arrow-right; ratio: 0.8"></span></a>';
+        $html .= '</div>';
 
-        $html .= '</div>'; // .company-info
-        $html .= '</div>'; // .premium-company-card
-
+        $html .= '</div>'; // card-body
+        $html .= '</div>'; // div wrapper
         return $html;
     }
 
     /**
-     * Get company URL
+     * Get result image URL
      *
-     * @param   object  $company  Company object
+     * @param   object  $result  Company or ad object
+     *
+     * @return  string|null
+     *
+     * @since   2.0.0
+     */
+    protected function getResultImage($result)
+    {
+        if ($result->item_type === 'company') {
+            return !empty($result->logo_location) ? Uri::root() . $result->logo_location : null;
+        } else {
+            // For DJ-Classifieds ads, get first image
+            if (!empty($result->image_url)) {
+                return $result->image_url;
+            }
+
+            // Try to get from images table
+            try {
+                $db = $this->db;
+                $query = $db->getQuery(true);
+                $query->select('name')
+                    ->from($db->quoteName('#__djcf_images'))
+                    ->where($db->quoteName('item_id') . ' = ' . (int) $result->id)
+                    ->where($db->quoteName('type') . ' = ' . $db->quote('item'))
+                    ->order('ordering ASC')
+                    ->setLimit(1);
+
+                $db->setQuery($query);
+                $imageName = $db->loadResult();
+
+                if ($imageName) {
+                    return Uri::root() . 'images/com_djclassifieds/' . $imageName;
+                }
+            } catch (Exception $e) {
+                // Ignore errors
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get result description
+     *
+     * @param   object  $result  Company or ad object
      *
      * @return  string
      *
-     * @since   1.0.0
+     * @since   2.0.0
      */
-    protected function getCompanyUrl($company)
+    protected function getResultDescription($result)
     {
-        // Generate URL to company in J-Business Directory
-        $itemId = $this->getJBusinessDirectoryMenuId();
+        $description = '';
 
-        $url = 'index.php?option=com_jbusinessdirectory&view=company&id=' . (int) $company->id;
-
-        if ($itemId) {
-            $url .= '&Itemid=' . $itemId;
+        if ($result->item_type === 'company') {
+            $description = strip_tags($result->description ?? '');
+        } else {
+            $description = strip_tags($result->intro_desc ?? $result->description ?? '');
         }
 
-        return \Joomla\CMS\Router\Route::_($url);
+        if (mb_strlen($description) > 120) {
+            $description = mb_substr($description, 0, 120) . '...';
+        }
+
+        return $description;
+    }
+
+    /**
+     * Get result URL
+     *
+     * @param   object  $result  Company or ad object
+     *
+     * @return  string
+     *
+     * @since   2.0.0
+     */
+    protected function getResultUrl($result)
+    {
+        if ($result->item_type === 'company') {
+            $itemId = $this->getJBusinessDirectoryMenuId();
+            $url = 'index.php?option=com_jbusinessdirectory&view=company&id=' . (int) $result->id;
+            if ($itemId) {
+                $url .= '&Itemid=' . $itemId;
+            }
+            return Route::_($url);
+        } else {
+            // DJ-Classifieds ad
+            $url = 'index.php?option=com_djclassifieds&view=item&cid=' . (int) $result->cat_id . '&id=' . (int) $result->id;
+            if (!empty($result->alias)) {
+                $url .= ':' . $result->alias;
+            }
+            return Route::_($url);
+        }
     }
 
     /**
@@ -623,15 +798,12 @@ class PlgContentPremiumCompanies extends CMSPlugin
         $pluginPath = Uri::root() . 'plugins/content/premiumcompanies/assets/';
 
         // Load CSS
-        $doc->addStyleSheet($pluginPath . 'css/style.css');
+        $doc->addStyleSheet($pluginPath . 'css/style-uikit.css');
 
         // Load custom CSS if provided
         $customCss = $this->params->get('custom_css', '');
         if (!empty($customCss)) {
             $doc->addStyleDeclaration($customCss);
         }
-
-        // Load JS
-        $doc->addScript($pluginPath . 'js/script.js');
     }
 }

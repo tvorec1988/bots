@@ -7,7 +7,7 @@
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>noreply@anthropic.com</authorEmail>
     <authorUrl>https://www.anthropic.com</authorUrl>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <description>PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_XML_DESCRIPTION</description>
 
     <files>
@@ -71,6 +71,55 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+
+                <field
+                    name="spacer1"
+                    type="spacer"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_DJCLASSIFIEDS_SETTINGS"
+                    hr="true"
+                />
+
+                <field
+                    name="search_djclassifieds"
+                    type="radio"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_SEARCH_DJCLASSIFIEDS_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_SEARCH_DJCLASSIFIEDS_DESC"
+                    default="1"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="djclassifieds_category_ids"
+                    type="textarea"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_DJCLASSIFIEDS_CATEGORIES_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_DJCLASSIFIEDS_CATEGORIES_DESC"
+                    rows="3"
+                    cols="50"
+                    hint="15,16,17"
+                    showon="search_djclassifieds:1"
+                />
+
+                <field
+                    name="max_djclassifieds_ads"
+                    type="number"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MAX_ADS_LABEL"
+                    description="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_MAX_ADS_DESC"
+                    default="5"
+                    min="1"
+                    max="20"
+                    step="1"
+                    showon="search_djclassifieds:1"
+                />
+
+                <field
+                    name="spacer2"
+                    type="spacer"
+                    label="PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_DISPLAY_SETTINGS"
+                    hr="true"
+                />
 
                 <field
                     name="show_position"
