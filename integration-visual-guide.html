@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Companies - Визуальная схема интеграции</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #0066cc;
+            text-align: center;
+        }
+
+        .template-structure {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .template-section {
+            background: white;
+            border-left: 4px solid #666;
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .template-section.highlight {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            font-weight: bold;
+        }
+
+        .insertion-point {
+            background: #d4edda;
+            border: 2px dashed #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .insertion-point::before {
+            content: "✓ ВСТАВЬТЕ КОД ЗДЕСЬ";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            text-align: center;
+            color: #0066cc;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .code-block .comment {
+            color: #75715e;
+        }
+
+        .code-block .keyword {
+            color: #66d9ef;
+        }
+
+        .code-block .string {
+            color: #e6db74;
+        }
+
+        .code-block .function {
+            color: #a6e22e;
+        }
+
+        .option-box {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .option-box h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+
+        .positions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .position-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .position-card:hover {
+            border-color: #0066cc;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+        }
+
+        .position-card h4 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+
+        .position-card.recommended {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .position-card.recommended::before {
+            content: "✓ Рекомендуется";
+            display: block;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-bottom: 10px;
+            width: fit-content;
+        }
+
+        .file-path {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            border-left: 4px solid #0066cc;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #0066cc;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .preview-image {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fafafa;
+            margin: 20px 0;
+        }
+
+        .preview-image img {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Визуальная схема интеграции Premium Companies Plugin</h1>
+
+        <div class="option-box">
+            <h3>📁 Где находится файл шаблона?</h3>
+            <p><strong>Стандартное расположение:</strong></p>
+            <div class="file-path">
+                /components/com_djclassifieds/views/additem/tmpl/default.php
+            </div>
+            <p><strong>Или переопределение шаблона (если используется):</strong></p>
+            <div class="file-path">
+                /templates/your_template/html/com_djclassifieds/additem/default.php
+            </div>
+        </div>
+
+        <h2>📝 Структура шаблона и место для вставки</h2>
+
+        <div class="template-structure">
+            <div class="template-section">
+                &lt;?php echo $this->loadTemplate('title'); ?&gt;
+            </div>
+            <div class="template-section highlight">
+                &lt;?php echo $this->loadTemplate('category'); ?&gt;
+            </div>
+            <div class="template-section">
+                &lt;?php foreach($this->plugin_category as $plugin_category) echo $plugin_category; ?&gt;
+            </div>
+            <div class="template-section highlight">
+                &lt;?php echo $this->loadTemplate('categoryfields'); ?&gt;
+            </div>
+
+            <div class="arrow">↓ ↓ ↓</div>
+
+            <div class="insertion-point">
+                <p style="margin: 0; font-weight: bold; color: #28a745;">
+                    Здесь вставьте код интеграции плагина
+                </p>
+                <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">
+                    После выбора категории и полей, пользователь увидит рекомендуемые компании
+                </p>
+            </div>
+
+            <div class="arrow">↓ ↓ ↓</div>
+
+            <div class="template-section">
+                &lt;?php if($par->get('show_introdesc','1')){ ?&gt;
+            </div>
+            <div class="template-section">
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;?php echo $this->loadTemplate('introdesc'); ?&gt;
+            </div>
+            <div class="template-section">
+                &lt;?php } ?&gt;
+            </div>
+            <div class="template-section">
+                ... (остальные поля формы)
+            </div>
+        </div>
+
+        <h2>🔧 Варианты позиций для интеграции</h2>
+
+        <div class="positions-grid">
+            <div class="position-card recommended">
+                <h4>Позиция 1: После категории</h4>
+                <p><strong>Где:</strong> После выбора категории и полей</p>
+                <p><strong>Преимущества:</strong></p>
+                <ul>
+                    <li>✅ Логично - после выбора категории</li>
+                    <li>✅ Компании сразу видны</li>
+                    <li>✅ Не мешают заполнению формы</li>
+                </ul>
+                <p style="font-family: monospace; font-size: 12px; background: #f0f0f0; padding: 5px;">
+                    После: categoryfields
+                </p>
+            </div>
+
+            <div class="position-card">
+                <h4>Позиция 2: После описания</h4>
+                <p><strong>Где:</strong> После поля описания объявления</p>
+                <p><strong>Преимущества:</strong></p>
+                <ul>
+                    <li>📝 После ввода описания</li>
+                    <li>🤖 AI может анализировать текст</li>
+                    <li>👍 Релевантные рекомендации</li>
+                </ul>
+                <p style="font-family: monospace; font-size: 12px; background: #f0f0f0; padding: 5px;">
+                    После: description
+                </p>
+            </div>
+
+            <div class="position-card">
+                <h4>Позиция 3: Перед кнопками</h4>
+                <p><strong>Где:</strong> Перед кнопками Сохранить/Отмена</p>
+                <p><strong>Преимущества:</strong></p>
+                <ul>
+                    <li>👁️ Последнее что видит пользователь</li>
+                    <li>💡 Финальная подсказка</li>
+                    <li>🎯 Перед отправкой формы</li>
+                </ul>
+                <p style="font-family: monospace; font-size: 12px; background: #f0f0f0; padding: 5px;">
+                    Перед: classifieds_buttons
+                </p>
+            </div>
+        </div>
+
+        <h2>💻 Код для вставки</h2>
+
+        <p><span class="step-number">1</span> <strong>Откройте файл шаблона</strong> (см. пути выше)</p>
+        <p><span class="step-number">2</span> <strong>Найдите нужную позицию</strong> (рекомендуется после categoryfields)</p>
+        <p><span class="step-number">3</span> <strong>Вставьте этот код:</strong></p>
+
+        <div class="code-block">
+<span class="keyword">&lt;?php</span>
+<span class="comment">// ============================================================</span>
+<span class="comment">// PREMIUM COMPANIES PLUGIN INTEGRATION</span>
+<span class="comment">// Shows recommended companies from J-Business Directory</span>
+<span class="comment">// ============================================================</span>
+<span class="keyword">use</span> Joomla\CMS\Plugin\PluginHelper;
+<span class="keyword">use</span> Joomla\CMS\Factory;
+
+<span class="comment">// Import content plugins</span>
+PluginHelper::<span class="function">importPlugin</span>(<span class="string">'content'</span>);
+
+<span class="comment">// Create article object for plugin</span>
+<span class="keyword">$premiumArticle</span> = <span class="keyword">new</span> stdClass();
+<span class="keyword">$premiumArticle</span>->text = <span class="string">''</span>;
+<span class="keyword">$premiumArticle</span>->cat_id = Factory::<span class="function">getApplication</span>()->input-><span class="function">getInt</span>(<span class="string">'cat_id'</span>, 0);
+
+<span class="comment">// Create empty params object</span>
+<span class="keyword">$premiumParams</span> = <span class="keyword">new</span> \Joomla\Registry\Registry();
+
+<span class="comment">// Trigger onContentBeforeDisplay event</span>
+<span class="keyword">$dispatcher</span> = Factory::<span class="function">getApplication</span>()-><span class="function">getDispatcher</span>();
+<span class="keyword">$premiumResults</span> = <span class="keyword">$dispatcher</span>-><span class="function">triggerEvent</span>(<span class="string">'onContentBeforeDisplay'</span>, <span class="keyword">array</span>(
+    <span class="string">'com_djclassifieds.additem'</span>,
+    &<span class="keyword">$premiumArticle</span>,
+    &<span class="keyword">$premiumParams</span>,
+    0
+));
+
+<span class="comment">// Output results from plugins</span>
+<span class="keyword">if</span> (!<span class="function">empty</span>(<span class="keyword">$premiumResults</span>)) {
+    <span class="keyword">foreach</span> (<span class="keyword">$premiumResults</span> <span class="keyword">as</span> <span class="keyword">$result</span>) {
+        <span class="keyword">if</span> (!<span class="function">empty</span>(<span class="keyword">$result</span>)) {
+            <span class="keyword">echo</span> <span class="keyword">$result</span>;
+        }
+    }
+}
+<span class="keyword">?&gt;</span>
+        </div>
+
+        <p><span class="step-number">4</span> <strong>Сохраните файл</strong></p>
+        <p><span class="step-number">5</span> <strong>Настройте плагин</strong> (см. раздел ниже)</p>
+
+        <h2>⚙️ Настройка плагина после интеграции</h2>
+
+        <div class="option-box">
+            <h3>1. Включите плагин</h3>
+            <ul>
+                <li>Расширения → Плагины</li>
+                <li>Найдите "Content - Premium Companies for DJ-Classifieds"</li>
+                <li>Убедитесь что статус = Включен</li>
+            </ul>
+        </div>
+
+        <div class="option-box">
+            <h3>2. Укажите целевые страницы</h3>
+            <p>В настройках плагина добавьте URL страницы добавления:</p>
+            <div class="file-path">
+                /index.php?option=com_djclassifieds&view=additem
+            </div>
+            <p><em>Это критично! Без этого плагин не будет работать.</em></p>
+        </div>
+
+        <div class="option-box">
+            <h3>3. Рекомендуемые настройки для формы</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #f0f0f0;">
+                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Параметр</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Значение</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Maximum Companies</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>5-7</strong> (не перегружать форму)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Show All Companies</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Да</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Match by Category</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Да</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Display Style</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Compact</strong> (для формы)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Show Company Logo</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Да</strong></td>
+                </tr>
+            </table>
+        </div>
+
+        <h2>✅ Результат</h2>
+
+        <div class="preview-image">
+            <p><strong>После интеграции пользователь увидит:</strong></p>
+            <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 4px;">
+                <div style="border: 2px solid #0066cc; border-radius: 8px; padding: 15px; background: #f9f9f9;">
+                    <h4 style="color: #333; margin: 0 0 15px 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">
+                        Рекомендуемые компании
+                    </h4>
+
+                    <!-- Премиум компания -->
+                    <div style="background: white; padding: 10px; margin: 10px 0; border-left: 4px solid #0066cc; border-radius: 4px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 60px; height: 60px; background: #0066cc; border-radius: 4px;"></div>
+                            <div>
+                                <strong style="color: #0066cc;">Строй Мастер</strong>
+                            </div>
+                        </div>
+                        <span style="background: linear-gradient(135deg, #ffd700, #ffed4e); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold;">ПРЕМИУМ</span>
+                    </div>
+
+                    <!-- Премиум компания -->
+                    <div style="background: white; padding: 10px; margin: 10px 0; border-left: 4px solid #ff6600; border-radius: 4px; display: flex; align-items: center; justify-space-between;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 60px; height: 60px; background: #ff6600; border-radius: 4px;"></div>
+                            <div>
+                                <strong style="color: #ff6600;">Дом Комфорта</strong>
+                            </div>
+                        </div>
+                        <span style="background: linear-gradient(135deg, #ffd700, #ffed4e); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold;">ПРЕМИУМ</span>
+                    </div>
+
+                    <!-- Обычная компания -->
+                    <div style="background: white; padding: 10px; margin: 10px 0; border-left: 4px solid #999; border-radius: 4px; display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 60px; height: 60px; background: #999; border-radius: 4px;"></div>
+                        <div>
+                            <strong style="color: #333;">Ремонт Про</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="option-box" style="background: #d4edda; border-left-color: #28a745;">
+            <h3 style="color: #28a745;">🎉 Готово!</h3>
+            <p>Теперь при добавлении объявления пользователи будут видеть релевантные компании!</p>
+            <ul>
+                <li>✅ Премиум компании показываются первыми</li>
+                <li>✅ Компании фильтруются по категории</li>
+                <li>✅ AI (если включен) подбирает самые подходящие</li>
+                <li>✅ Красивое отображение с логотипами</li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>
