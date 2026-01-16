@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Companies Plugin - Demo</title>
+    <style>
+        /* Стили из плагина */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .demo-section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-section h2 {
+            margin-top: 0;
+            color: #0066cc;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+
+        /* Container Styles */
+        .premium-companies-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .premium-companies-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+
+        .premium-companies-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        /* Card Style */
+        .premium-companies-cards .premium-company-card {
+            flex: 1 1 calc(33.333% - 20px);
+            min-width: 280px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-companies-cards .premium-company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* List Style */
+        .premium-companies-list-style .premium-companies-list {
+            flex-direction: column;
+        }
+
+        .premium-companies-list-style .premium-company-card {
+            flex: 1 1 100%;
+            background: #fff;
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .premium-companies-list-style .company-logo {
+            flex-shrink: 0;
+        }
+
+        /* Compact Style */
+        .premium-companies-compact .premium-companies-list {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .premium-companies-compact .premium-company-card {
+            flex: 1 1 100%;
+            background: #fff;
+            border-radius: 4px;
+            padding: 10px 15px;
+            border-left: 4px solid #0066cc;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .premium-companies-compact .company-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .premium-companies-compact .company-name {
+            margin: 0;
+            font-size: 1em;
+        }
+
+        /* Company Logo */
+        .company-logo {
+            width: 100%;
+            max-width: 120px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .premium-companies-list-style .company-logo,
+        .premium-companies-compact .company-logo {
+            margin-bottom: 0;
+            max-width: 80px;
+        }
+
+        .company-logo img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        /* Company Info */
+        .company-info {
+            flex: 1;
+        }
+
+        .company-name {
+            font-size: 1.2em;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .company-name a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .company-name a:hover {
+            color: #0052a3;
+            text-decoration: underline;
+        }
+
+        .company-description {
+            font-size: 0.95em;
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        /* Company Contact */
+        .company-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .company-contact span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .company-contact i {
+            color: #0066cc;
+            font-size: 1.1em;
+        }
+
+        .company-contact a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .company-contact a:hover {
+            text-decoration: underline;
+        }
+
+        /* Premium Badge */
+        .premium-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+        }
+
+        .premium-companies-list-style .premium-badge,
+        .premium-companies-compact .premium-badge {
+            position: relative;
+            top: auto;
+            right: auto;
+            margin-left: auto;
+        }
+
+        /* Icons */
+        .icon-phone:before { content: "📞"; }
+        .icon-envelope:before { content: "✉️"; }
+        .icon-link:before { content: "🔗"; }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .premium-company-card {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Info box */
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 1400px; margin: 0 auto;">
+        <h1 style="text-align: center; color: #333;">Premium Companies Plugin - Демонстрация стилей</h1>
+
+        <div class="info-box">
+            <h3>ℹ️ Как это работает:</h3>
+            <ul>
+                <li><strong>Премиум компании</strong> показываются первыми (со значком "ПРЕМИУМ")</li>
+                <li><strong>Обычные компании</strong> идут после премиум (без значка)</li>
+                <li><strong>AI подбор</strong> (если включен) дополнительно сортирует компании по релевантности</li>
+            </ul>
+        </div>
+
+        <!-- CARDS STYLE -->
+        <div class="demo-section">
+            <h2>1️⃣ Стиль: Карточки (Cards)</h2>
+            <p>Красивые карточки с полной информацией - идеально для десктопа</p>
+
+            <div class="premium-companies-container premium-companies-cards">
+                <h3 class="premium-companies-title">Рекомендуемые компании</h3>
+                <div class="premium-companies-list">
+
+                    <!-- Premium Company 1 -->
+                    <div class="premium-company-card">
+                        <div class="company-logo">
+                            <img src="https://via.placeholder.com/120x80/0066cc/ffffff?text=Logo" alt="Строй Мастер">
+                        </div>
+                        <div class="company-info">
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Строй Мастер</a>
+                            </h4>
+                            <p class="company-description">
+                                Профессиональное строительство и ремонт квартир, домов и офисов. Более 15 лет на рынке. Гарантия качества.
+                            </p>
+                            <div class="company-contact">
+                                <span class="company-phone"><i class="icon-phone"></i> +7 (495) 123-45-67</span>
+                                <span class="company-email"><i class="icon-envelope"></i> info@stroymaster.ru</span>
+                                <span class="company-website"><i class="icon-link"></i> <a href="#" target="_blank">Посетить сайт</a></span>
+                            </div>
+                        </div>
+                        <span class="premium-badge">Премиум</span>
+                    </div>
+
+                    <!-- Premium Company 2 -->
+                    <div class="premium-company-card">
+                        <div class="company-logo">
+                            <img src="https://via.placeholder.com/120x80/ff6600/ffffff?text=Logo" alt="Дом Комфорта">
+                        </div>
+                        <div class="company-info">
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Дом Комфорта</a>
+                            </h4>
+                            <p class="company-description">
+                                Комплексный ремонт под ключ. Дизайн, строительство, отделка. Работаем с лучшими материалами.
+                            </p>
+                            <div class="company-contact">
+                                <span class="company-phone"><i class="icon-phone"></i> +7 (495) 987-65-43</span>
+                                <span class="company-email"><i class="icon-envelope"></i> contact@domkomfort.ru</span>
+                                <span class="company-website"><i class="icon-link"></i> <a href="#" target="_blank">Посетить сайт</a></span>
+                            </div>
+                        </div>
+                        <span class="premium-badge">Премиум</span>
+                    </div>
+
+                    <!-- Regular Company -->
+                    <div class="premium-company-card">
+                        <div class="company-logo">
+                            <img src="https://via.placeholder.com/120x80/999999/ffffff?text=Logo" alt="Ремонт Про">
+                        </div>
+                        <div class="company-info">
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Ремонт Про</a>
+                            </h4>
+                            <p class="company-description">
+                                Качественный ремонт квартир и офисов. Опытные мастера, доступные цены, гарантия на все работы.
+                            </p>
+                            <div class="company-contact">
+                                <span class="company-phone"><i class="icon-phone"></i> +7 (495) 555-22-33</span>
+                                <span class="company-email"><i class="icon-envelope"></i> info@remontpro.ru</span>
+                                <span class="company-website"><i class="icon-link"></i> <a href="#" target="_blank">Посетить сайт</a></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- LIST STYLE -->
+        <div class="demo-section">
+            <h2>2️⃣ Стиль: Список (List)</h2>
+            <p>Горизонтальный список с логотипом слева - компактный и информативный</p>
+
+            <div class="premium-companies-container premium-companies-list-style">
+                <h3 class="premium-companies-title">Рекомендуемые компании</h3>
+                <div class="premium-companies-list">
+
+                    <!-- Premium Company -->
+                    <div class="premium-company-card">
+                        <div class="company-logo">
+                            <img src="https://via.placeholder.com/80x80/0066cc/ffffff?text=Logo" alt="Строй Мастер">
+                        </div>
+                        <div class="company-info">
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Строй Мастер</a>
+                            </h4>
+                            <p class="company-description">
+                                Профессиональное строительство и ремонт квартир, домов и офисов. Более 15 лет на рынке. Гарантия качества.
+                            </p>
+                            <div class="company-contact">
+                                <span class="company-phone"><i class="icon-phone"></i> +7 (495) 123-45-67</span>
+                                <span class="company-email"><i class="icon-envelope"></i> info@stroymaster.ru</span>
+                                <span class="company-website"><i class="icon-link"></i> <a href="#" target="_blank">Посетить сайт</a></span>
+                            </div>
+                        </div>
+                        <span class="premium-badge">Премиум</span>
+                    </div>
+
+                    <!-- Premium Company -->
+                    <div class="premium-company-card">
+                        <div class="company-logo">
+                            <img src="https://via.placeholder.com/80x80/ff6600/ffffff?text=Logo" alt="Дом Комфорта">
+                        </div>
+                        <div class="company-info">
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Дом Комфорта</a>
+                            </h4>
+                            <p class="company-description">
+                                Комплексный ремонт под ключ. Дизайн, строительство, отделка. Работаем с лучшими материалами.
+                            </p>
+                            <div class="company-contact">
+                                <span class="company-phone"><i class="icon-phone"></i> +7 (495) 987-65-43</span>
+                                <span class="company-email"><i class="icon-envelope"></i> contact@domkomfort.ru</span>
+                                <span class="company-website"><i class="icon-link"></i> <a href="#" target="_blank">Посетить сайт</a></span>
+                            </div>
+                        </div>
+                        <span class="premium-badge">Премиум</span>
+                    </div>
+
+                    <!-- Regular Company -->
+                    <div class="premium-company-card">
+                        <div class="company-logo">
+                            <img src="https://via.placeholder.com/80x80/999999/ffffff?text=Logo" alt="Ремонт Про">
+                        </div>
+                        <div class="company-info">
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Ремонт Про</a>
+                            </h4>
+                            <p class="company-description">
+                                Качественный ремонт квартир и офисов. Опытные мастера, доступные цены, гарантия на все работы.
+                            </p>
+                            <div class="company-contact">
+                                <span class="company-phone"><i class="icon-phone"></i> +7 (495) 555-22-33</span>
+                                <span class="company-email"><i class="icon-envelope"></i> info@remontpro.ru</span>
+                                <span class="company-website"><i class="icon-link"></i> <a href="#" target="_blank">Посетить сайт</a></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPACT STYLE -->
+        <div class="demo-section">
+            <h2>3️⃣ Стиль: Компактный (Compact)</h2>
+            <p>Минимальный размер - только название и значок премиум</p>
+
+            <div class="premium-companies-container premium-companies-compact">
+                <h3 class="premium-companies-title">Рекомендуемые компании</h3>
+                <div class="premium-companies-list">
+
+                    <!-- Premium Company -->
+                    <div class="premium-company-card">
+                        <div class="company-info">
+                            <div class="company-logo">
+                                <img src="https://via.placeholder.com/60x60/0066cc/ffffff?text=Logo" alt="Строй Мастер">
+                            </div>
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Строй Мастер</a>
+                            </h4>
+                        </div>
+                        <span class="premium-badge">Премиум</span>
+                    </div>
+
+                    <!-- Premium Company -->
+                    <div class="premium-company-card">
+                        <div class="company-info">
+                            <div class="company-logo">
+                                <img src="https://via.placeholder.com/60x60/ff6600/ffffff?text=Logo" alt="Дом Комфорта">
+                            </div>
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Дом Комфорта</a>
+                            </h4>
+                        </div>
+                        <span class="premium-badge">Премиум</span>
+                    </div>
+
+                    <!-- Regular Company -->
+                    <div class="premium-company-card">
+                        <div class="company-info">
+                            <div class="company-logo">
+                                <img src="https://via.placeholder.com/60x60/999999/ffffff?text=Logo" alt="Ремонт Про">
+                            </div>
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Ремонт Про</a>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <!-- Regular Company -->
+                    <div class="premium-company-card">
+                        <div class="company-info">
+                            <div class="company-logo">
+                                <img src="https://via.placeholder.com/60x60/999999/ffffff?text=Logo" alt="Мастер Отделки">
+                            </div>
+                            <h4 class="company-name">
+                                <a href="#" target="_blank">Мастер Отделки</a>
+                            </h4>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+            <h3>💡 Примечания:</h3>
+            <ul>
+                <li><strong>Премиум компании</strong> имеют золотой значок "ПРЕМИУМ" и всегда показываются первыми</li>
+                <li><strong>Обычные компании</strong> идут после премиум (без значка)</li>
+                <li><strong>При наведении</strong> карточки поднимаются и увеличивается тень (hover эффект)</li>
+                <li><strong>На мобильных</strong> все стили автоматически адаптируются под экран</li>
+                <li><strong>AI подбор</strong> (если включен) дополнительно сортирует по релевантности, но премиум все равно приоритетнее</li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>
