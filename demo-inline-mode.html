@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Companies Plugin - Inline Mode Demo</title>
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+
+    <!-- Premium Companies Plugin CSS -->
+    <style>
+        /* Inline Mode Styles */
+        .premium-companies-inline {
+            border-left: 3px solid #1e87f0;
+            background: #fff;
+            margin: 20px 0;
+        }
+
+        .premium-companies-inline .uk-card {
+            border-radius: 6px;
+            background: #f8f8f8;
+            box-shadow: none;
+            border: 1px solid #e5e5e5;
+        }
+
+        .premium-companies-inline .uk-card-title {
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+            color: #1e87f0;
+        }
+
+        .premium-companies-inline .uk-card-title svg {
+            color: #faa05a;
+        }
+
+        .premium-companies-inline .uk-card {
+            transition: all 0.2s ease;
+        }
+
+        .premium-companies-inline .uk-card:hover {
+            background: #fff;
+            border-color: #1e87f0;
+        }
+
+        .premium-companies-inline h5 {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .premium-companies-inline h5 a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .premium-companies-inline h5 a:hover {
+            color: #1e87f0;
+        }
+
+        .premium-companies-inline .uk-text-meta {
+            font-size: 0.75rem;
+        }
+
+        .premium-companies-inline .uk-button-small {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+        }
+
+        /* Page styling */
+        body {
+            background: #fafafa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .badge-success {
+            background: #32d296;
+            color: white;
+        }
+
+        .badge-info {
+            background: #1e87f0;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="demo-container">
+    <div class="demo-header">
+        <h1 class="uk-margin-remove">Premium Companies Plugin</h1>
+        <p class="uk-text-large uk-margin-small-top">Inline Mode - Интеграция в форму</p>
+        <p class="uk-text-meta">Версия 2.1.0</p>
+    </div>
+
+    <div class="uk-alert uk-alert-primary">
+        <h3>Что такое Inline Mode?</h3>
+        <p>Inline Mode (Встроенный режим) - это компактный дизайн для гармоничного отображения рекомендаций прямо внутри формы добавления заказа. Карточки компактные, без больших отступов и изображений.</p>
+    </div>
+
+    <!-- ===== ДЕМО ФОРМЫ С INLINE РЕЖИМОМ ===== -->
+    <div class="uk-card uk-card-default">
+        <div class="uk-card-header">
+            <h3 class="uk-card-title">Добавить заказ на пошив одежды</h3>
+        </div>
+
+        <div class="uk-card-body">
+            <!-- Название -->
+            <div class="uk-margin">
+                <label class="uk-form-label">Название заказа *</label>
+                <input class="uk-input" type="text" placeholder="Например: Пошив платья на свадьбу" value="Пошив платья на свадьбу">
+            </div>
+
+            <!-- Описание -->
+            <div class="uk-margin">
+                <label class="uk-form-label">Описание заказа *</label>
+                <textarea class="uk-textarea" rows="4" placeholder="Опишите детали заказа...">Нужен пошив вечернего платья для свадьбы. Размер 42-44, предпочтительно атлас или шелк. Срок - 2 недели.</textarea>
+            </div>
+
+            <!-- ===== INLINE РЕЖИМ - РЕКОМЕНДАЦИИ ===== -->
+            <div class="premium-companies-inline uk-margin-medium-top uk-margin-medium-bottom">
+                <div class="uk-card uk-card-default uk-card-body uk-card-small">
+                    <h4 class="uk-card-title uk-text-primary">
+                        <span uk-icon="icon: star; ratio: 0.9"></span> Рекомендуемые премиум компании
+                    </h4>
+                    <div class="uk-grid-small uk-child-width-1-2@s" uk-grid>
+
+                        <!-- Карточка 1 - Премиум компания -->
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-hover uk-card-small" style="padding: 12px;">
+                                <div class="uk-flex uk-flex-between uk-flex-middle">
+                                    <h5 class="uk-margin-remove">
+                                        <span uk-icon="icon: star; ratio: 0.7" class="uk-text-warning"></span>
+                                        <a href="#" class="uk-link-reset">Ателье "Элегант"</a>
+                                    </h5>
+                                </div>
+                                <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-top">
+                                    <span class="uk-text-meta uk-text-small">
+                                        <span uk-icon="icon: home; ratio: 0.7"></span> Компания
+                                    </span>
+                                    <a href="#" class="uk-button uk-button-text uk-button-small">
+                                        Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 2 - Промо объявление -->
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-hover uk-card-small" style="padding: 12px;">
+                                <div class="uk-flex uk-flex-between uk-flex-middle">
+                                    <h5 class="uk-margin-remove">
+                                        <span uk-icon="icon: star; ratio: 0.7" class="uk-text-warning"></span>
+                                        <a href="#" class="uk-link-reset">Пошив свадебных платьев</a>
+                                    </h5>
+                                </div>
+                                <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-top">
+                                    <span class="uk-text-meta uk-text-small">
+                                        <span uk-icon="icon: tag; ratio: 0.7"></span> Объявление производства
+                                    </span>
+                                    <a href="#" class="uk-button uk-button-text uk-button-small">
+                                        Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 3 - Обычная компания -->
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-hover uk-card-small" style="padding: 12px;">
+                                <div class="uk-flex uk-flex-between uk-flex-middle">
+                                    <h5 class="uk-margin-remove">
+                                        <a href="#" class="uk-link-reset">Швейная мастерская "Модный стиль"</a>
+                                    </h5>
+                                </div>
+                                <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-top">
+                                    <span class="uk-text-meta uk-text-small">
+                                        <span uk-icon="icon: home; ratio: 0.7"></span> Компания
+                                    </span>
+                                    <a href="#" class="uk-button uk-button-text uk-button-small">
+                                        Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 4 - Обычное объявление -->
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-hover uk-card-small" style="padding: 12px;">
+                                <div class="uk-flex uk-flex-between uk-flex-middle">
+                                    <h5 class="uk-margin-remove">
+                                        <a href="#" class="uk-link-reset">Индивидуальный пошив одежды</a>
+                                    </h5>
+                                </div>
+                                <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-top">
+                                    <span class="uk-text-meta uk-text-small">
+                                        <span uk-icon="icon: tag; ratio: 0.7"></span> Объявление производства
+                                    </span>
+                                    <a href="#" class="uk-button uk-button-text uk-button-small">
+                                        Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- ===== КОНЕЦ INLINE РЕЖИМА ===== -->
+
+            <!-- Цена -->
+            <div class="uk-margin">
+                <label class="uk-form-label">Бюджет</label>
+                <input class="uk-input" type="text" placeholder="Введите бюджет">
+            </div>
+
+            <!-- Контакты -->
+            <div class="uk-margin">
+                <label class="uk-form-label">Телефон *</label>
+                <input class="uk-input" type="text" placeholder="+7 (999) 123-45-67">
+            </div>
+        </div>
+
+        <div class="uk-card-footer">
+            <div class="uk-flex uk-flex-between uk-flex-middle">
+                <a class="uk-button uk-button-default" href="#">
+                    <span uk-icon="icon: close"></span> Отмена
+                </a>
+                <button class="uk-button uk-button-primary" type="submit">
+                    <span uk-icon="icon: check"></span> Опубликовать заказ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Сравнение режимов -->
+    <div class="comparison">
+        <div class="comparison-item">
+            <span class="badge badge-success">Inline Mode ✓</span>
+            <h4>Встроенный режим</h4>
+            <ul class="uk-list uk-list-bullet uk-text-small">
+                <li>Компактный дизайн</li>
+                <li>Без больших отступов</li>
+                <li>Без изображений (экономия места)</li>
+                <li>2 колонки на десктопе</li>
+                <li>Гармонично встроен в форму</li>
+                <li>Идеален для интеграции</li>
+            </ul>
+        </div>
+
+        <div class="comparison-item">
+            <span class="badge badge-info">Cards Mode</span>
+            <h4>Режим карточек</h4>
+            <ul class="uk-list uk-list-bullet uk-text-small">
+                <li>Полноценные карточки</li>
+                <li>Большие отступы (uk-section)</li>
+                <li>С изображениями компаний</li>
+                <li>3 колонки на десктопе</li>
+                <li>Отдельный блок от формы</li>
+                <li>Идеален для лендингов</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Инструкция по настройке -->
+    <div class="uk-card uk-card-default uk-margin-large-top">
+        <div class="uk-card-header">
+            <h3 class="uk-card-title">Как включить Inline Mode?</h3>
+        </div>
+        <div class="uk-card-body">
+            <ol class="uk-list uk-list-decimal">
+                <li>Откройте <strong>Система → Плагины → Premium Companies</strong></li>
+                <li>В разделе <strong>"Display Settings"</strong> найдите <strong>"Display Style"</strong></li>
+                <li>Выберите <strong>"Inline (Form Integration)"</strong></li>
+                <li>Сохраните настройки</li>
+                <li>Готово! Рекомендации будут отображаться компактно прямо в форме</li>
+            </ol>
+
+            <div class="uk-alert uk-alert-success uk-margin-top">
+                <h4>Преимущества Inline Mode</h4>
+                <ul class="uk-list uk-list-bullet">
+                    <li>📱 <strong>Лучше для мобильных устройств</strong> - занимает меньше места</li>
+                    <li>🎨 <strong>Гармоничная интеграция</strong> - не выделяется из формы</li>
+                    <li>⚡ <strong>Быстрая загрузка</strong> - не загружает изображения</li>
+                    <li>👁️ <strong>Меньше отвлекает</strong> - пользователь фокусируется на форме</li>
+                    <li>✅ <strong>Больше конверсия</strong> - ненавязчивые рекомендации</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="uk-text-center uk-margin-large-top uk-margin-large-bottom">
+        <p class="uk-text-meta">
+            Premium Companies Plugin v2.1.0<br>
+            Создано для гармоничной интеграции в формы DJ-Classifieds
+        </p>
+    </div>
+
+</div>
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+
+</body>
+</html>

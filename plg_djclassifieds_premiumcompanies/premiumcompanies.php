@@ -560,6 +560,25 @@ class PlgContentPremiumCompanies extends CMSPlugin
         $displayStyle = $this->params->get('display_style', 'cards');
         $showLogo = $this->params->get('show_logo', 1);
 
+        // Inline mode for form integration - minimal styling
+        if ($displayStyle === 'inline') {
+            $html = '<div class="premium-companies-inline uk-margin-medium-top uk-margin-medium-bottom">';
+            $html .= '<div class="uk-card uk-card-default uk-card-body uk-card-small">';
+            $html .= '<h4 class="uk-card-title uk-text-primary"><span uk-icon="icon: star; ratio: 0.9"></span> ' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TITLE') . '</h4>';
+            $html .= '<div class="uk-grid-small uk-child-width-1-2@s" uk-grid>';
+
+            foreach ($results as $result) {
+                $html .= $this->renderResultCard($result, $displayStyle, $showLogo);
+            }
+
+            $html .= '</div>'; // grid
+            $html .= '</div>'; // card
+            $html .= '</div>'; // container
+
+            return $html;
+        }
+
+        // Regular mode with full section
         $html = '<div class="uk-section uk-section-muted uk-section-small premium-companies-container">';
         $html .= '<div class="uk-container">';
         $html .= '<h3 class="uk-heading-line uk-text-center"><span>' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TITLE') . '</span></h3>';
@@ -596,7 +615,40 @@ class PlgContentPremiumCompanies extends CMSPlugin
     {
         $isCompany = ($result->item_type === 'company');
         $isPremium = !empty($result->is_premium);
+        $resultUrl = $this->getResultUrl($result);
 
+        // Inline mode - ultra compact for form integration
+        if ($displayStyle === 'inline') {
+            $html = '<div>';
+            $html .= '<div class="uk-card uk-card-default uk-card-hover uk-card-small" style="padding: 12px;">';
+
+            // Title with premium indicator
+            $html .= '<div class="uk-flex uk-flex-between uk-flex-middle">';
+            $html .= '<h5 class="uk-margin-remove">';
+            if ($isPremium) {
+                $html .= '<span uk-icon="icon: star; ratio: 0.7" class="uk-text-warning"></span> ';
+            }
+            $html .= '<a href="' . $resultUrl . '" class="uk-link-reset">' . htmlspecialchars($result->name) . '</a>';
+            $html .= '</h5>';
+            $html .= '</div>';
+
+            // Type label + button
+            $html .= '<div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-top">';
+            $html .= '<span class="uk-text-meta uk-text-small">';
+            $html .= '<span uk-icon="icon: ' . ($isCompany ? 'home' : 'tag') . '; ratio: 0.7"></span> ';
+            $html .= $isCompany ? Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TYPE_COMPANY') : Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TYPE_AD');
+            $html .= '</span>';
+            $html .= '<a href="' . $resultUrl . '" class="uk-button uk-button-text uk-button-small">';
+            $html .= Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_VIEW_DETAILS');
+            $html .= '</a>';
+            $html .= '</div>';
+
+            $html .= '</div>'; // card
+            $html .= '</div>'; // div wrapper
+            return $html;
+        }
+
+        // Regular modes
         $html = '<div>';
         $html .= '<div class="uk-card uk-card-default uk-card-hover uk-card-body uk-card-small">';
 
@@ -619,7 +671,6 @@ class PlgContentPremiumCompanies extends CMSPlugin
 
         // Title
         $html .= '<h4 class="uk-card-title uk-margin-small-bottom">';
-        $resultUrl = $this->getResultUrl($result);
         $html .= '<a href="' . $resultUrl . '" class="uk-link-reset">' . htmlspecialchars($result->name) . '</a>';
         $html .= '</h4>';
 
@@ -636,7 +687,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
         }
 
         // Contact info for companies
-        if ($isCompany && $displayStyle !== 'compact') {
+        if ($isCompany && $displayStyle !== 'compact' && $displayStyle !== 'inline') {
             $html .= '<div class="uk-margin-small-top">';
 
             if (!empty($result->phone)) {

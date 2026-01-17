@@ -293,6 +293,94 @@
     opacity: 0.5;
 }
 
+/* =================================================================
+   INLINE MODE - For Form Integration
+   ================================================================= */
+
+/* Inline Container - minimal styling for seamless form integration */
+.premium-companies-inline {
+    border-left: 3px solid var(--tm-primary-color, #1e87f0);
+    background: var(--tm-background, #fff);
+}
+
+.premium-companies-inline .uk-card {
+    border-radius: 6px;
+    background: var(--tm-background-muted, #f8f8f8);
+    box-shadow: none;
+    border: 1px solid var(--tm-border-color, #e5e5e5);
+}
+
+.premium-companies-inline .uk-card-title {
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+    color: var(--tm-primary-color, #1e87f0);
+}
+
+.premium-companies-inline .uk-card-title svg {
+    color: var(--tm-warning-color, #faa05a);
+}
+
+/* Inline cards - compact layout */
+.premium-companies-inline .uk-card {
+    transition: all 0.2s ease;
+}
+
+.premium-companies-inline .uk-card:hover {
+    background: var(--tm-background, #fff);
+    border-color: var(--tm-primary-color, #1e87f0);
+}
+
+.premium-companies-inline h5 {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.premium-companies-inline h5 a {
+    color: var(--tm-text-color, #333);
+    text-decoration: none;
+}
+
+.premium-companies-inline h5 a:hover {
+    color: var(--tm-primary-color, #1e87f0);
+}
+
+.premium-companies-inline .uk-text-meta {
+    font-size: 0.75rem;
+}
+
+.premium-companies-inline .uk-button-small {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+}
+
+/* Dark mode support for inline */
+@media (prefers-color-scheme: dark) {
+    .premium-companies-inline {
+        border-left-color: var(--tm-primary-color, #3498db);
+        background: var(--tm-background, #1e1e1e);
+    }
+
+    .premium-companies-inline .uk-card {
+        background: var(--tm-background-muted, #2a2a2a);
+        border-color: var(--tm-border-color, #3a3a3a);
+    }
+
+    .premium-companies-inline .uk-card:hover {
+        background: var(--tm-background, #1e1e1e);
+    }
+
+    .premium-companies-inline h5 a {
+        color: var(--tm-text-color, #e5e5e5);
+    }
+}
+
+/* Responsive inline mode */
+@media (max-width: 640px) {
+    .premium-companies-inline .uk-grid-small > * {
+        width: 100% !important;
+    }
+}
+
 /* Print Styles */
 @media print {
     .premium-companies-container {
@@ -313,5 +401,13 @@
 
     .premium-companies-container .uk-button-text {
         display: none;
+    }
+
+    .premium-companies-inline {
+        border-left: 2px solid #333;
+    }
+
+    .premium-companies-inline .uk-card {
+        border: 1px solid #ddd;
     }
 }
