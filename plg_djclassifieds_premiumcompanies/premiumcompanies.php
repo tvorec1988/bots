@@ -628,7 +628,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
             if ($isPremium) {
                 $html .= '<span uk-icon="icon: star; ratio: 0.7" class="uk-text-warning"></span> ';
             }
-            $html .= '<a href="' . $resultUrl . '" class="uk-link-reset">' . htmlspecialchars($result->name) . '</a>';
+            $html .= '<a href="' . $resultUrl . '" class="uk-link-reset" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($result->name) . '</a>';
             $html .= '</h5>';
             $html .= '</div>';
 
@@ -638,7 +638,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
             $html .= '<span uk-icon="icon: ' . ($isCompany ? 'home' : 'tag') . '; ratio: 0.7"></span> ';
             $html .= $isCompany ? Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TYPE_COMPANY') : Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_TYPE_AD');
             $html .= '</span>';
-            $html .= '<a href="' . $resultUrl . '" class="uk-button uk-button-text uk-button-small">';
+            $html .= '<a href="' . $resultUrl . '" class="uk-button uk-button-text uk-button-small" target="_blank" rel="noopener noreferrer">';
             $html .= Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_VIEW_DETAILS');
             $html .= '</a>';
             $html .= '</div>';
@@ -671,7 +671,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
 
         // Title
         $html .= '<h4 class="uk-card-title uk-margin-small-bottom">';
-        $html .= '<a href="' . $resultUrl . '" class="uk-link-reset">' . htmlspecialchars($result->name) . '</a>';
+        $html .= '<a href="' . $resultUrl . '" class="uk-link-reset" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($result->name) . '</a>';
         $html .= '</h4>';
 
         // Type label
@@ -695,7 +695,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
             }
 
             if (!empty($result->website)) {
-                $html .= '<div class="uk-text-small"><span uk-icon="icon: world; ratio: 0.8"></span> <a href="' . htmlspecialchars($result->website) . '" target="_blank" class="uk-link-muted">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_WEBSITE') . '</a></div>';
+                $html .= '<div class="uk-text-small"><span uk-icon="icon: world; ratio: 0.8"></span> <a href="' . htmlspecialchars($result->website) . '" target="_blank" rel="noopener noreferrer" class="uk-link-muted">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_WEBSITE') . '</a></div>';
             }
 
             $html .= '</div>';
@@ -703,7 +703,7 @@ class PlgContentPremiumCompanies extends CMSPlugin
 
         // View button
         $html .= '<div class="uk-margin-small-top">';
-        $html .= '<a href="' . $resultUrl . '" class="uk-button uk-button-text">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_VIEW_DETAILS') . ' <span uk-icon="icon: arrow-right; ratio: 0.8"></span></a>';
+        $html .= '<a href="' . $resultUrl . '" class="uk-button uk-button-text" target="_blank" rel="noopener noreferrer">' . Text::_('PLG_DJCLASSIFIEDS_PREMIUMCOMPANIES_VIEW_DETAILS') . ' <span uk-icon="icon: arrow-right; ratio: 0.8"></span></a>';
         $html .= '</div>';
 
         $html .= '</div>'; // card-body
